@@ -8,7 +8,6 @@ app_key = ''
 choices = []
 
 
-
 def recipe_search(url):
     """Makes the API request to Edamam, checks to see if there are results and either asks the user to search again
     or returns the recipe results if successful."""
