@@ -22,13 +22,14 @@ def recipe_search(url):
                 global app_key
                 app_id = input('Please enter your app_id: ')
                 app_key = input('Please enter your app_key: ')
-                search_again()
+                search_again(data)
             else:
+                print('Hope you find what you\'re looking for! Please try again soon.')
                 exit()
 
-        elif data['hits'] == []:
+        if data['hits'] == []:
             print('Sorry, no recipes found.')
-            search_again()
+            search_again(data)
 
         else:
             print('Recipes found!')
@@ -51,12 +52,17 @@ def create_file(ingredient, choices, results):
         print(f'Recipes saved to {file_name}')
 
 
-def search_again():
+def search_again(data):
     """Allows the user to search again or exit. Clears previous selections."""
     search_again_choice = input('Would you like to search for another recipe? yes/no ')
+    print(data)
     if search_again_choice.lower() == 'yes':
         choices.clear()
         recipe_search_is_on()
+    elif search_again_choice.lower() == 'no' and data['hits'] == []:
+        print('Hope you find what you\'re looking for! Please try again soon.')
+    elif search_again_choice.lower() == 'no' and data['status'] == 'error':
+        print('Hope you find what you\'re looking for! Please try again soon.')
     else:
         print('Enjoy your meal! 😋')
         exit()
@@ -113,3 +119,13 @@ def recipe_search_is_on():
 
 
 recipe_search_is_on()
+
+def is_data(data):
+    is_data_returned = True
+    for key in data:
+        if data[key] == 'error' or data[key] == []:
+            print('Oops! An error occured! This may be due to  invalid credentials.')
+            is_data_returned = False
+        else:
+            print('Recipes found!')
+            is_data_returned = True
