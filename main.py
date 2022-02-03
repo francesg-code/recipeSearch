@@ -13,12 +13,20 @@ def recipe_search(url):
     or returns the recipe results if successful."""
     result = requests.get(url)
     data = result.json()
-    if data['hits'] == []:
-        print('Sorry, no recipes found.')
-        search_again()
-    else:
-        print('Recipes found!')
-        return data['hits']
+    for key in data:
+        if data[key] == 'error':
+            print(data)
+            print('Please check that you have entered a valid app_id and app_key.')
+            search_again()
+
+        elif data['hits'] == []:
+            print('Sorry, no recipes found.')
+            search_again()
+
+        else:
+            print(data)
+            print('Recipes found!')
+            return data['hits']
 
 
 def create_file(ingredient, choices, results):
