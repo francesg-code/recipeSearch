@@ -9,22 +9,28 @@ choices = []
 
 
 def recipe_search(url):
-    """Makes the API request to Edamam, checks to see if there are results and either asks the user to search again
+    """Makes the API request to Edamam, checks for errors, and either asks the user to search again
     or returns the recipe results if successful."""
     result = requests.get(url)
     data = result.json()
     for key in data:
         if data[key] == 'error':
-            print(data)
-            print('Please check that you have entered a valid app_id and app_key.')
-            search_again()
+            print('Oops! An error occured! This may be due to  invalid credentials.')
+            try_again = input('Would you like to try searching again? yes/no ')
+            if try_again == 'yes':
+                global app_id
+                global app_key
+                app_id = input('Please enter your app_id: ')
+                app_key = input('Please enter your app_key: ')
+                search_again()
+            else:
+                exit()
 
         elif data['hits'] == []:
             print('Sorry, no recipes found.')
             search_again()
 
         else:
-            print(data)
             print('Recipes found!')
             return data['hits']
 
