@@ -7,12 +7,14 @@ app_id = ''
 app_key = ''
 choices = []
 recipes_found = False
+response_code = 000
 
 
 def recipe_search(url):
     """Makes the API request to Edamam, checks for errors, and either asks the user to search again
     or returns the recipe results if successful."""
     result = requests.get(url)
+    global response_code
     response_code = result.status_code
     data = result.json()
     if response_code == 401:
@@ -22,7 +24,6 @@ def recipe_search(url):
     else:
         global recipes_found
         recipes_found = True
-        print(data)
         print('Recipes found!')
         return data['hits']
     try_again = input('Would you like to try searching again? yes/no ')
@@ -49,12 +50,11 @@ def create_file(ingredient, choices, results):
 def search_again(try_again):
     """Allows the user to search again or exit. Clears previous selections."""
     if try_again.lower() == 'yes':
-        new_credentials = input('Would you like to re-enter your app-id and app-key? yes/no ')
-        if new_credentials.lower() == 'yes':
+        if response_code == 401:
             global app_id
             global app_key
-            app_id = input('Please enter your app_id: ')
-            app_key = input('Please enter your app_key: ')
+            app_id = input('Please confirm your app_id: ')
+            app_key = input('Please confirm your app_key: ')
         choices.clear()
         recipe_search_is_on()
     elif try_again.lower() == 'no' and recipes_found:
