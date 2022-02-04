@@ -6,35 +6,27 @@ from dietary_requirements import options
 app_id = ''
 app_key = ''
 choices = []
+recipes_found = False
 
 
 def recipe_search(url):
     """Makes the API request to Edamam, checks for errors, and either asks the user to search again
     or returns the recipe results if successful."""
     result = requests.get(url)
+    response_code = result.status_code
     data = result.json()
-    for key in data:
-        if data[key] == 'error':
-            print('Oops! An error occured! This may be due to  invalid credentials.')
-            try_again = input('Would you like to try searching again? yes/no ')
-            if try_again == 'yes':
-                global app_id
-                global app_key
-                app_id = input('Please enter your app_id: ')
-                app_key = input('Please enter your app_key: ')
-                search_again(data)
-            else:
-                print('Hope you find what you\'re looking for! Please try again soon.')
-                exit()
-
-        if data['hits'] == []:
-            print('Sorry, no recipes found.')
-            search_again(data)
-
-        else:
-            print('Recipes found!')
-            return data['hits']
-
+    if response_code == 401:
+        print('Oops! An error occured! This may be due to  invalid credentials.')
+    elif not data['hits']:
+        print('Sorry, no recipes found.')
+    else:
+        global recipes_found
+        recipes_found = True
+        print(data)
+        print('Recipes found!')
+        return data['hits']
+    try_again = input('Would you like to try searching again? yes/no ')
+    search_again(try_again)
 
 def create_file(ingredient, choices, results):
     """Saves the recipes to a file"""
@@ -52,19 +44,22 @@ def create_file(ingredient, choices, results):
         print(f'Recipes saved to {file_name}')
 
 
-def search_again(data):
+def search_again(try_again):
     """Allows the user to search again or exit. Clears previous selections."""
-    search_again_choice = input('Would you like to search for another recipe? yes/no ')
-    print(data)
-    if search_again_choice.lower() == 'yes':
+    if try_again.lower() == 'yes':
+        new_credentials = input('Would you like to re-enter your app-id and app-key? yes/no ')
+        if new_credentials.lower() == 'yes':
+            global app_id
+            global app_key
+            app_id = input('Please enter your app_id: ')
+            app_key = input('Please enter your app_key: ')
         choices.clear()
         recipe_search_is_on()
-    elif search_again_choice.lower() == 'no' and data['hits'] == []:
-        print('Hope you find what you\'re looking for! Please try again soon.')
-    elif search_again_choice.lower() == 'no' and data['status'] == 'error':
-        print('Hope you find what you\'re looking for! Please try again soon.')
-    else:
+    elif try_again.lower() == 'no' and recipes_found:
         print('Enjoy your meal! 😋')
+        exit()
+    else:
+        print('Hope you find what you\'re looking for! Please try again soon.')
         exit()
 
 
@@ -115,17 +110,9 @@ def recipe_search_is_on():
     save_to_file = input('Would you like to save to file? yes/no: ')
     if save_to_file.lower() == 'yes':
         create_file(ingredient, choices, results)
-    search_again()
+    else:
+        try_again = input('Would you like to try searching again? yes/no ')
+        search_again(try_again)
 
 
 recipe_search_is_on()
-
-def is_data(data):
-    is_data_returned = True
-    for key in data:
-        if data[key] == 'error' or data[key] == []:
-            print('Oops! An error occured! This may be due to  invalid credentials.')
-            is_data_returned = False
-        else:
-            print('Recipes found!')
-            is_data_returned = True
