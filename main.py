@@ -16,7 +16,7 @@ def recipe_search(url):
     response_code = result.status_code
     data = result.json()
     if response_code == 401:
-        print('Oops! An error occured! This may be due to  invalid credentials.')
+        print('Oops! An error occurred! This may be due to invalid credentials.')
     elif not data['hits']:
         print('Sorry, no recipes found.')
     else:
@@ -42,6 +42,8 @@ def create_file(ingredient, choices, results):
             text_file.write(recipe['label'] + '\n')
             text_file.write(recipe['url'] + '\n')
         print(f'Recipes saved to {file_name}')
+        try_again = input('Would you like to try searching again? yes/no ')
+        search_again(try_again)
 
 
 def search_again(try_again):
