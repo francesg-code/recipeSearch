@@ -1,1 +1,1 @@
-# recipeSearch
+This is a project that was created as part of a Code First Girls Python course (https://codefirstgirls.org.uk/). The console app, 'Stop Staring At The Fridge!', allows you to search for recipes using the Edamam API (https://www.edamam.com/). The user can search for recipes based on one ingredient, and the recipes are filtered to match any specified dietary requirements. There is also the option to save the recipes to a file for future use.
