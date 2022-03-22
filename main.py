@@ -92,14 +92,17 @@ def recipe_search_is_on():
             for key, value in options.items():
                 print('Dietary requirement:', key, '\n', 'Description:', value)
         elif choice.lower() != 'done':
-            for option in options:
-                if choice == option:
-                    url += f'&health={choice}'
-                    choices.append(choice)
-                    if len(choices) == 1:
-                        print(f'The chosen dietary requirement is {choices}.')
-                    else:
-                        print(f'The chosen dietary requirements are {choices}.')
+            try:
+                options[choice]
+            except KeyError:
+                print('Sorry, please choose a dietary requirement from the choice available')
+            else:
+                url += f'&health={choice}'
+                choices.append(choice)
+                if len(choices) == 1:
+                    print(f'The chosen dietary requirement is {choices}.')
+                else:
+                    print(f'The chosen dietary requirements are {choices}.')
 
     results = recipe_search(url)
 
